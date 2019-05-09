@@ -1,10 +1,15 @@
+// module to work with sqlite database
 const sqlite = require("sqlite");
+// file with ftp logs loaded into memory
 const log = require("fs").readFileSync('./ftp.log', 'utf-8');
+// spliting string that contains whole file into array of strings, 
+// using seperation by \n
 const strings = log.split('\n');
 
-!async function(){
+!async function main(){
+  // open file in current directory for database
   const db = await sqlite.open('./db.sqlite', { Promise });
-
+  // create table for data storage
   await db.run(`CREATE TABLE IF NOT EXISTS lab1 (` +
     `ts text,` +
     `uid text,` +
@@ -26,8 +31,9 @@ const strings = log.split('\n');
     `resp_p text,` +
     `fuid text)`
   );
+  // truncate it
   await db.run("DELETE FROM lab1;");
-
+  // destructure rows of the document into corresponding variables 
   for(let i = 0; i < strings.length; i++){
     const [
       $ts,
@@ -50,7 +56,7 @@ const strings = log.split('\n');
       $resp_p,
       $fuid,
     ] = strings[ i ].split("\t");
-
+    // fill table with extracted values
     await db.run(`insert into lab1 values(` + 
       `$ts,` + 
       `$uid,` +
