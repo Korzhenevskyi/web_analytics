@@ -13,7 +13,7 @@ def WriteToFile( df, path ):
     file.close()
 
 def GetGroupedData(startDate, endDate):
-    df = pd.read_csv('NYPD_Complaint_Data_Historic.csv', usecols=['CMPLNT_FR_DT'])
+    df = pd.read_csv('D:/NYPD_Complaint_Data_Historic.csv', usecols=['CMPLNT_FR_DT'])
     df['CMPLNT_FR_DT'] = pd.to_datetime(df['CMPLNT_FR_DT'], infer_datetime_format=True, errors='coerce')
     df['CMPLNT_FR_DT'] = df.dropna()
     df = df[(df['CMPLNT_FR_DT'] >= startDate) & (df['CMPLNT_FR_DT'] <= endDate)].groupby(['CMPLNT_FR_DT']).size().reset_index(name='Number')
@@ -65,4 +65,7 @@ result_df['AR_delta'] = np.abs(result_df['Ethalon'] - result_df['AR'])
 result_df['ARMA'] = arma_results
 result_df['ARMA_delta'] = np.abs(result_df['Ethalon'] - result_df['ARMA'])
 print (result_df.to_string())
-WriteToFile(result_df, 'results.csv')
+#WriteToFile(result_df, 'results.csv')
+print ('SES: ' + str(np.mean(result_df['SES_delta'])))
+print ('AR: ' + str(np.mean(result_df['AR_delta'])))
+print ('ARMA: ' + str(np.mean(result_df['ARMA_delta'])))
