@@ -6,6 +6,7 @@ from pathlib import Path
 from statsmodels.tsa.holtwinters import SimpleExpSmoothing
 from statsmodels.tsa.ar_model import AR
 from statsmodels.tsa.arima_model import ARMA
+from matplotlib import pyplot as plt
 
 def WriteToFile( df, path ):
     file = open( path, 'w' )
@@ -41,6 +42,13 @@ def AutoRegressionMA(base_df, steps):
     yhat = model_fit.predict(len(data), len(data) + steps - 1)
     return np.round(yhat)
 
+def ResultsToPlot(df):
+    plt.plot(range(1, 11), df['Ethalon'], '.', label='Ethalon')
+    plt.plot(range(1, 11), df['SES'], '.', label='SES')
+    plt.plot(range(1, 11), df['AR'], '.', label='AR')
+    plt.plot(range(1, 11), df['ARMA'], '.', label='ARMA')
+    plt.legend(loc='best')
+    plt.show()
 
 startDate = datetime.datetime.strptime('2010-01-01', '%Y-%m-%d')
 endDate = datetime.datetime.strptime('2012-12-31', '%Y-%m-%d')
@@ -65,7 +73,10 @@ result_df['AR_delta'] = np.abs(result_df['Ethalon'] - result_df['AR'])
 result_df['ARMA'] = arma_results
 result_df['ARMA_delta'] = np.abs(result_df['Ethalon'] - result_df['ARMA'])
 print (result_df.to_string())
-#WriteToFile(result_df, 'results.csv')
+WriteToFile(result_df, 'results.csv')
+
 print ('SES: ' + str(np.mean(result_df['SES_delta'])))
 print ('AR: ' + str(np.mean(result_df['AR_delta'])))
 print ('ARMA: ' + str(np.mean(result_df['ARMA_delta'])))
+
+ResultsToPlot(result_df)
